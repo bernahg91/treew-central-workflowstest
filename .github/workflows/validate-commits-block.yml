@@ -1,0 +1,34 @@
+name: Validar y bloquear commits inválidos
+
+on:
+  workflow_call:
+
+jobs:
+  bloquear_commits:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Instalar dependencias
+        run: |
+          npm install --save-dev @commitlint/{cli,config-conventional}
+
+      - name: Validar commits
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.ref }}
+          commits=$(git log --format="%H" origin/${{ github.event.pull_request.base.ref }}..HEAD)
+          error=0
+          for commit in $commits; do
+            echo "Validando commit: $commit"
+            git show -s --format=%B $commit | npx commitlint || error=1
+          done
+          if [ "$error" -ne 0 ]; then
+            echo "Se encontraron commits inválidos. Corrige los mensajes para cumplir la DO."
+            exit 1
+          fi
