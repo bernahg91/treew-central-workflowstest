@@ -6,8 +6,9 @@ on:
 jobs:
   commitlint:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout del repositorio
         uses: actions/checkout@v4
 
       - name: Configurar Node.js
@@ -17,13 +18,13 @@ jobs:
 
       - name: Instalar dependencias
         run: |
-          npm install --save-dev @commitlint/{cli,config-conventional}
+          npm install --save-dev @commitlint/cli @commitlint/config-conventional
 
-      - name: Validar commits
+      - name: Validar commits con commitlint
         run: |
           git fetch --depth=2 origin ${{ github.event.pull_request.base.ref }}
           commits=$(git log --format="%H" origin/${{ github.event.pull_request.base.ref }}..HEAD)
           for commit in $commits; do
-            echo "Validando commit: $commit"
+            echo "🔍 Validando commit: $commit"
             git show -s --format=%B $commit | npx commitlint
           done
