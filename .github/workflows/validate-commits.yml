@@ -15,14 +15,15 @@ jobs:
         with:
           node-version: 18
 
-      - name: Instalar dependencias necesarias
+      - name: Instalar dependencias de commitlint
         run: npm install --save-dev @commitlint/cli @commitlint/config-conventional
 
-      - name: Validar commits
+      - name: Validar commits del pull request
         run: |
           git fetch --depth=2 origin ${{ github.event.pull_request.base.ref }}
           commits=$(git log --format="%H" origin/${{ github.event.pull_request.base.ref }}..HEAD)
           for commit in $commits; do
             echo "🔍 Validando commit: $commit"
-            git show -s --format=%B $commit | npx commitlint
+            mensaje=$(git show -s --format=%B $commit)
+            echo "$mensaje" | npx --no-install commitlint
           done
