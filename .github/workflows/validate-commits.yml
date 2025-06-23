@@ -24,6 +24,6 @@ jobs:
           git fetch --depth=2 origin ${{ github.event.pull_request.base.ref }}
           commits=$(git log --format="%H" origin/${{ github.event.pull_request.base.ref }}..HEAD)
           for commit in $commits; do
-            echo "Validando commit: $commit"
-            git show -s --format=%B $commit | ./node_modules/.bin/commitlint
+            echo "🔍 Validando commit: $commit"
+            git show -s --format=%B $commit | npx commitlint
           done
