@@ -7,7 +7,7 @@ jobs:
   commitlint:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout del código
         uses: actions/checkout@v4
 
       - name: Configurar Node.js
@@ -15,9 +15,8 @@ jobs:
         with:
           node-version: 18
 
-      - name: Instalar dependencias
-        run: |
-          npm install --save-dev @commitlint/{cli,config-conventional}
+      - name: Instalar dependencias necesarias
+        run: npm install --save-dev @commitlint/cli @commitlint/config-conventional
 
       - name: Validar commits
         run: |
