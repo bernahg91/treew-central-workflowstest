@@ -27,5 +27,8 @@ jobs:
           for commit in $commits; do
             echo "🔍 Validando commit: $commit"
             git show -s --format=%B $commit | npx commitlint
+            if [ $? -ne 0 ]; then
+              echo "❌ Commit inválido: $commit"
+              exit 1
+            fi
           done
-
