@@ -1,4 +1,4 @@
-name: Validar mensajes de commits
+name: Bloquear PR con commits inválidos
 
 on:
   workflow_call:
