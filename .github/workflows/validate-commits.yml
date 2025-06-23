@@ -6,6 +6,7 @@ on:
 jobs:
   commitlint:
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout del código
         uses: actions/checkout@v4
@@ -15,15 +16,16 @@ jobs:
         with:
           node-version: 18
 
-      - name: Instalar dependencias de commitlint
-        run: npm install --save-dev @commitlint/cli @commitlint/config-conventional
+      - name: Instalar dependencias
+        run: |
+          npm install --save-dev @commitlint/{cli,config-conventional}
 
-      - name: Validar commits del pull request
+      - name: Bloquear si hay commits inválidos
         run: |
           git fetch --depth=2 origin ${{ github.event.pull_request.base.ref }}
+          chmod +x ./node_modules/.bin/commitlint
           commits=$(git log --format="%H" origin/${{ github.event.pull_request.base.ref }}..HEAD)
           for commit in $commits; do
-            echo "🔍 Validando commit: $commit"
-            mensaje=$(git show -s --format=%B $commit)
-            echo "$mensaje" | npx --no-install commitlint
+            echo "⛔ Verificando commit: $commit"
+            git show -s --format=%B $commit | ./node_modules/.bin/commitlint
           done
